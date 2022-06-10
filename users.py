@@ -1,6 +1,6 @@
 from typing import List
 from datetime import datetime
-
+import json
 
 # exception throw when username does not exist 
 class InvalidUsername(Exception):
@@ -28,12 +28,65 @@ def clear_users():
     pass
 
 def login(username: str, password: str) -> dict:
+  try:
+    with open('users.txt', 'r') as f:
+      data = f.read()
+      users = json.loads(data)
+      if users.get(username):
+        user = users.get(username)
+        if user['password'] != password:
+          raise InvalidPassword("invalid password")
+        else:
+          return user
+      else:
+        raise InvalidUsername("invalid username")
+  except FileNotFoundError:
+    users = {}
+    with open('users.txt', 'w+') as f:
+      if password != password2:
+        raise PasswordMissmatch("your password did not match")
+      else:
+        users[username] = {"username": username, "password":password, "dateOfBirth": dateOfBirth}
+        f.write(json.dumps(users))
+    return users[username]
+
+
     """ 
         Returns user details if user exist else returns None
     """
     pass
 
 def register(username: str, password: str, password2: str, dateOfBirth: str):
+  try:
+    with open('users.txt', 'r') as f:
+      data = f.read()
+      users = json.loads(data)
+      if users.get(username):
+        raise UserAlreadyExist("user already exists")
+      else:
+        if password != password2:
+          raise PasswordMissmatch("your password did not match")
+        else:
+          try:
+            datetime.strptime(dateOfBirth, '%d/%m/%Y')
+          except ValueError:
+              raise InvalidDateOfBirth("Incorrect data format, should be YYYY-MM-DD")
+          users[username] = {"username": username, "password":password, "dateOfBirth": dateOfBirth}
+          with open('users.txt', 'w') as f:
+            f.write(json.dumps(users))
+          return users[username]
+  except FileNotFoundError:
+    users = {}
+    with open('users.txt', 'w+') as f:
+      if password != password2:
+        raise PasswordMissmatch("your password did not match")
+      else:
+        users[username] = {"username": username, "password":password, "dateOfBirth": dateOfBirth}
+        f.write(json.dumps(users))
+    return users[username]
+
+
+
     """
     if user exist return error saying user already exist
 
@@ -47,6 +100,9 @@ def register(username: str, password: str, password2: str, dateOfBirth: str):
 def list_users() -> List:
     pass 
 
+
+
 if __name__ == '__main__':
     """ You can put your testing logic here """
-    pass 
+    print("calling register")
+    register(username, password, password2, dateOfBirth)
