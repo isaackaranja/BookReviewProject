@@ -25,7 +25,7 @@ def server(host, port):
     </html>
     """
     client_connection.sendall(
-      f"HTTP/1.1 200 OK\r\nContent-length: {len(html_page)}\r\nContent-type: tex/html; charset=UTF-8\r\n\r\n{html_page}".encode()
+      f"HTTP/1.1 200 OK\r\nContent-Length: {len(html_page)}\r\nContent-Type: text/html; charset=UTF-8\r\n\r\n{html_page}".encode()
     )
     client_connection.close()
     print("done serving request")
