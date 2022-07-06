@@ -24,6 +24,7 @@ class InvalidDateOfBirth(Exception):
     pass 
 
 def clear_users():
+  with open('filename.txt', 'w'):
     """ only used when running tests"""
     pass
 
@@ -68,7 +69,7 @@ def register(username: str, password: str, password2: str, dateOfBirth: str):
           raise PasswordMissmatch("your password did not match")
         else:
           try:
-            datetime.strptime(dateOfBirth, '%d/%m/%Y')
+            datetime.strptime(dateOfBirth, '%Y-%m-%d')
           except ValueError:
               raise InvalidDateOfBirth("Incorrect data format, should be YYYY-MM-DD")
           users[username] = {"username": username, "password":password, "dateOfBirth": dateOfBirth}
