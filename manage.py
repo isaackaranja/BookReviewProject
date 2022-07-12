@@ -2,6 +2,7 @@ from users import register
 from users import login
 import sys
 import socket
+from datetime import datetime
 
 def server(host, port):
   listening_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -27,14 +28,14 @@ def server(host, port):
         <div>
           <form>
             <lable>username</lable><br>
-            <input type"text" name="username" placeholder="username"><br>
+            <input type"text" id="username" name="username" placeholder="username"><br>
             <lable>password</lable>
-            <input type="text" name="password" placeholder="password"/><br>
+            <input type="text" id="password1" name="password" placeholder="password"/><br>
             <lable>password2</lable><br>
-            <input type="text" name="password2" placeholder="password2"/><br>
+            <input type="text" id="password2" name="password2" placeholder="password2"/><br>
             <lable>Date Of Birth</lable><br>
-            <input type="text" name="dateOfBirth" value="2020-01-02"/><br>
-            <input type="submit" value="submit"/>
+            <input type="text" id="dateOfBirth" name="dateOfBirth" value="2020-01-02"/><br>
+            <input type="submit" id="submit" value="submit"/>
           </form>
         <div/>
       </body>
@@ -43,6 +44,20 @@ def server(host, port):
     response_status = "200 OK"
     if request_data.startswith("GET /?username"):
       date_of_birth = request_data.split("\r\n")[0].split("?")[1].split("&")[-1].split(" ")[0].split("=")
+      try:
+        datetime.strptime(date_of_birth[1], '%Y-%m-%d')
+        birth = date_of_birth[1].split('-')
+        birth.reverse()
+        birth = '/'.join(birth)
+        date_of_birth = [date_of_birth[0], birth]
+      except ValueError:
+        try:
+          datetime.strptime(date_of_birth[1], '%d-%m-%Y')
+          birth = date_of_birth[1].split('-')
+          birth = '/'.join(birth)
+          date_of_birth = [date_of_birth[0], birth]
+        except ValueError:
+          pass
       request_data_list = request_data.split("\r\n")[0].split("?")[1].split("&")[:-1]
       register_data = {}
       register_data[date_of_birth[0]] = date_of_birth[1]

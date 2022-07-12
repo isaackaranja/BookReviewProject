@@ -1,6 +1,7 @@
 from typing import List
 from datetime import datetime
 import json
+import os
 
 # exception throw when username does not exist 
 class InvalidUsername(Exception):
@@ -24,9 +25,10 @@ class InvalidDateOfBirth(Exception):
     pass 
 
 def clear_users():
-  with open('filename.txt', 'w'):
-    """ only used when running tests"""
-    pass
+  # with open('filename.txt', 'w'):
+  #   """ only used when running tests"""
+  if os.path.exists("users.txt"):
+    os.remove('users.txt')
 
 def login(username: str, password: str) -> dict:
   try:
@@ -69,9 +71,9 @@ def register(username: str, password: str, password2: str, dateOfBirth: str):
           raise PasswordMissmatch("your password did not match")
         else:
           try:
-            datetime.strptime(dateOfBirth, '%Y-%m-%d')
+            datetime.strptime(dateOfBirth, '%d/%m/%Y')
           except ValueError:
-              raise InvalidDateOfBirth("Incorrect data format, should be YYYY-MM-DD")
+              raise InvalidDateOfBirth("Incorrect data format, should be DD/MM/YYYY")
           users[username] = {"username": username, "password":password, "dateOfBirth": dateOfBirth}
           with open('users.txt', 'w') as f:
             f.write(json.dumps(users))
@@ -82,6 +84,10 @@ def register(username: str, password: str, password2: str, dateOfBirth: str):
       if password != password2:
         raise PasswordMissmatch("your password did not match")
       else:
+        try:
+            datetime.strptime(dateOfBirth, '%d/%m/%Y')
+        except ValueError:
+            raise InvalidDateOfBirth("Incorrect data format, should be DD/MM/YYYY")
         users[username] = {"username": username, "password":password, "dateOfBirth": dateOfBirth}
         f.write(json.dumps(users))
     return users[username]
